@@ -1,11 +1,13 @@
 # Define variables
-DOMAIN_NAME ?= example.com
+DOMAIN_NAME ?=
 ACME_FILE ?= ./acme.json
+HASHED_PASSWORD_ENV_VAR ?=
 
 # If HASHED_PASSWORD_ENV_VAR is not provided, prompt the user for a password
 ifndef HASHED_PASSWORD_ENV_VAR
 define PASSWORD_PROMPT
-	@echo "Please enter a password for basic authentication:"; \
+	@echo "No hashed password provided."; \
+	echo "Please enter a password for basic authentication:"; \
 	read -s password_input; \
 	 if [ -z "$$password_input" ]; then \
 	    echo "Error: No password provided."; \
@@ -16,15 +18,34 @@ define PASSWORD_PROMPT
 	 fi
 endef
 else
-  PASSWORD_PROMPT=@echo "Using provided hashed password: $(HASHED_PASSWORD_ENV_VAR)"
+  PASSWORD_PROMPT=@echo "Using provided hashed password."
+endif
+
+# If DOMAIN_NAME is not provided, prompt the user for it
+ifndef DOMAIN_NAME
+define DOMAIN_PROMPT
+	@echo "No domain name provided."; \
+	echo "Please enter a domain name:"; \
+	read domain_input; \
+	if [ -z "$$domain_input" ]; then \
+		echo "Error: No domain name provided."; \
+		exit 1; \
+	else \
+		DOMAIN_NAME=$$domain_input; \
+		echo "Domain name set to $$domain_input"; \
+	fi
+endef
+else
+  DOMAIN_PROMPT=@echo "Using provided domain name: $(DOMAIN_NAME)"
 endif
 
 # Environment setup target
 .PHONY: set-env
 set-env:
-	@echo "Setting environment variables..."
-	@echo "DOMAIN_NAME=$(DOMAIN_NAME)"
+	$(DOMAIN_PROMPT)
 	$(PASSWORD_PROMPT)
+	@echo "Final Domain Name: $(DOMAIN_NAME)"
+	@echo "Final Hashed Password: $(HASHED_PASSWORD_ENV_VAR)"
 
 # Task to create acme.json and set correct permissions
 .PHONY: create-acme
