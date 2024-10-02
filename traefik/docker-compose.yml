@@ -2,16 +2,6 @@ services:
   traefik:
     image: traefik:latest
     network_mode: "host"
-    command:
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      - --entrypoints.traefik-dashboard.address=:8080
-      - --log.level=ERROR
-      - --metrics.prometheus=true
-      - --metrics.prometheus.entryPoint=websecure
-      - --accesslog
-      - --accesslog.filepath=/var/log/traefik/access.log
-      - --accesslog.bufferingsize=100
     ports:
       - "80:80"
       - "443:443"
@@ -21,13 +11,11 @@ services:
       - "./acme.json:/acme.json:rw"
       - "./traefik.yml:/etc/traefik/traefik.yml"
       - "./log:/var/log/traefik"
-      - "./entrypoint.sh:/entrypoint.sh:ro"
-    entrypoint: ["/bin/sh", "/entrypoint.sh"]
     environment:
       - TRAEFIK_LOG_LEVEL=ERROR
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=Host(`{HOST_NAME}`)"
+      - "traefik.http.routers.traefik.rule=Host(`${HOST_NAME}`)"
       - "traefik.http.middlewares.authtraefik.basicauth.users=traefikwala:${HASHED_PASSWORD_ENV_VAR}"
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.routers.api.entrypoints=traefik-dashboard"
@@ -36,6 +24,7 @@ services:
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.tls.certresolver=myresolver"
       - "traefik.http.routers.traefik.middlewares=authtraefik"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
     deploy:
       resources:
         limits:
