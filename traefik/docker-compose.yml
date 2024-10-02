@@ -5,7 +5,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./acme.json:/acme.json:rw"
@@ -18,7 +17,6 @@ services:
       - "traefik.http.routers.traefik.rule=Host(`${HOST_NAME}`)"
       - "traefik.http.middlewares.authtraefik.basicauth.users=traefikwala:${HASHED_PASSWORD_ENV_VAR}"
       - "traefik.http.routers.api.service=api@internal"
-      - "traefik.http.routers.api.entrypoints=traefik-dashboard"
       - "traefik.http.routers.api.middlewares=authtraefik"
       - "traefik.http.routers.traefik.service=api@internal"
       - "traefik.http.routers.traefik.entrypoints=websecure"
