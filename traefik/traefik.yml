@@ -23,8 +23,8 @@ certificatesResolvers:
     acme:
       email: saransh@jaalyantra.com
       storage: /acme.json
-      httpChallenge:
-        entryPoint: web
+      dnsChallenge:
+        provider: cloudflare
 
 accessLog:
   filePath: "logs/access.log"

@@ -12,6 +12,7 @@ services:
       - "./log:/var/log/traefik"
     environment:
       - TRAEFIK_LOG_LEVEL=ERROR
+      - CF_API_TOKEN=${CF_API_TOKEN}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.rule=Host(`${HOST_NAME}`)"
