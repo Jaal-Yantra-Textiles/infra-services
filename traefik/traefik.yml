@@ -1,0 +1,31 @@
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: false
+
+log:
+  level: ERROR
+
+api:
+  dashboard: true
+
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+
+providers:
+  docker:
+    exposedByDefault: false
+
+certificatesResolvers:
+  myresolver:
+    acme:
+      email: saransh@cynsar.capital
+      storage: /acme.json
+      httpChallenge:
+        entryPoint: web
+
+accessLog:
+  filePath: "logs/access.log"
+  bufferingSize: 100
