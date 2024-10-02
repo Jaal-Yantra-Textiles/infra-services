@@ -58,7 +58,7 @@ create-acme:
 .PHONY: run-traefik
 run-traefik: create-acme set-env
 	@echo "Running Traefik with domain $(DOMAIN_NAME)..."
-	@DOMAIN_NAME=$(DOMAIN_NAME) HASHED_PASSWORD_ENV_VAR=$(HASHED_PASSWORD_ENV_VAR) docker-compose up -d
+	@DOMAIN_NAME=$(DOMAIN_NAME) HASHED_PASSWORD_ENV_VAR=$(HASHED_PASSWORD_ENV_VAR) docker compose up -d
 
 # Full setup to set environment, create acme.json, and run Traefik
 .PHONY: setup
