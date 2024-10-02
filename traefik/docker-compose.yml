@@ -7,11 +7,7 @@ services:
     command:
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
-      - --providers.docker=true
-      - --providers.docker.swarmMode=true
-      - --providers.docker.exposedbydefault=true
-      - --api.insecure=false
-      - --api.dashboard=true
+      - --entrypoints.traefik-dashboard.address=:8080
       - --log.level=ERROR
       - --metrics.prometheus=true
       - --metrics.prometheus.entryPoint=websecure
@@ -21,13 +17,13 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "8080:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./acme.json:/acme.json:rw"
       - "./traefik.yml:/etc/traefik/traefik.yml"
       - "./log:/var/log/traefik"
     environment:
-      - TRAEFIK_PROVIDERS_DOCKER_ENDPOINT=unix:///var/run/docker.sock
       - TRAEFIK_LOG_LEVEL=ERROR
     labels:
       - "traefik.enable=true"

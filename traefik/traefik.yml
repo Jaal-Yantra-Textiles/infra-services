@@ -21,7 +21,7 @@ providers:
 certificatesResolvers:
   myresolver:
     acme:
-      email: saransh@cynsar.capital
+      email: saransh@jaalyantra.com
       storage: /acme.json
       httpChallenge:
         entryPoint: web
