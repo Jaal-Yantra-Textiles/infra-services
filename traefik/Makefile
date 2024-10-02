@@ -2,6 +2,7 @@
 DOMAIN_NAME ?=
 ACME_FILE ?= ./acme.json
 HASHED_PASSWORD_ENV_VAR ?=
+CF_API_TOKEN ?=
 
 # If HASHED_PASSWORD_ENV_VAR is not provided, prompt the user for a password
 ifndef HASHED_PASSWORD_ENV_VAR
@@ -39,13 +40,33 @@ else
   DOMAIN_PROMPT=@echo "Using provided domain name: $(DOMAIN_NAME)"
 endif
 
+# If CF_API_TOKEN is not provided, prompt the user for it
+ifndef CF_API_TOKEN
+define CF_API_TOKEN_PROMPT
+	@echo "No Cloudflare API token provided."; \
+	echo "Please enter the Cloudflare API token:"; \
+	read -s cf_token_input; \
+	if [ -z "$$cf_token_input" ]; then \
+		echo "Error: No Cloudflare API token provided."; \
+		exit 1; \
+	else \
+		CF_API_TOKEN=$$cf_token_input; \
+		echo "Cloudflare API token successfully set."; \
+	fi
+endef
+else
+  CF_API_TOKEN_PROMPT=@echo "Using provided Cloudflare API token."
+endif
+
 # Environment setup target
 .PHONY: set-env
 set-env:
 	$(DOMAIN_PROMPT)
 	$(PASSWORD_PROMPT)
+	$(CF_API_TOKEN_PROMPT)
 	@echo "Final Domain Name: $(DOMAIN_NAME)"
 	@echo "Final Hashed Password: $(HASHED_PASSWORD_ENV_VAR)"
+	@echo "Final Cloudflare API Token: $(CF_API_TOKEN)"
 
 # Task to create acme.json and set correct permissions
 .PHONY: create-acme
@@ -58,7 +79,7 @@ create-acme:
 .PHONY: run-traefik
 run-traefik: create-acme set-env
 	@echo "Running Traefik with domain $(DOMAIN_NAME)..."
-	@DOMAIN_NAME=$(DOMAIN_NAME) HASHED_PASSWORD_ENV_VAR=$(HASHED_PASSWORD_ENV_VAR) docker compose up -d
+	@DOMAIN_NAME=$(DOMAIN_NAME) HASHED_PASSWORD_ENV_VAR=$(HASHED_PASSWORD_ENV_VAR) CF_API_TOKEN=$(CF_API_TOKEN) docker-compose up -d
 
 # Full setup to set environment, create acme.json, and run Traefik
 .PHONY: setup
