@@ -4,4 +4,4 @@
 chmod 600 /acme.json
 
 # Start Traefik
-/entrypoint "$@"
+traefik "$@"
