@@ -12,7 +12,7 @@ services:
       - "./log:/var/log/traefik"
     environment:
       - TRAEFIK_LOG_LEVEL=ERROR
-      - CLOUDFLARE_API_KEY=${CF_API_TOKEN}
+      - CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.rule=Host(`${DOMAIN_NAME}`)"
