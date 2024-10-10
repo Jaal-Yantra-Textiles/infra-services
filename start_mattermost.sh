@@ -9,18 +9,19 @@ fi
 # Export all variables from the .env file
 export $(grep -v '^#' .env | xargs)
 
-# Define the path to the Docker Compose file
-DOCKER_COMPOSE_FILE="mattermost/docker/docker-compose.without-nginx.yml"
+# Define the paths to the Docker Compose files
+DOCKER_COMPOSE_FILE="mattermost/docker/docker-compose.yml"
+DOCKER_COMPOSE_WITHOUT_NGINX_FILE="mattermost/docker/docker-compose.without-nginx.yml"
 
-# Check if docker-compose.without-nginx.yml exists
-if [ ! -f "$DOCKER_COMPOSE_FILE" ]; then
-    echo "Error: $DOCKER_COMPOSE_FILE file not found."
+# Check if docker-compose.yml and docker-compose.without-nginx.yml exist
+if [ ! -f "$DOCKER_COMPOSE_FILE" ] || [ ! -f "$DOCKER_COMPOSE_WITHOUT_NGINX_FILE" ]; then
+    echo "Error: Docker Compose files not found in mattermost/docker."
     exit 1
 fi
 
-# Start the Mattermost services using the specified Docker Compose file
-echo "Starting Mattermost services using $DOCKER_COMPOSE_FILE..."
-docker compose -f "$DOCKER_COMPOSE_FILE" --env-file .env up -d
+# Start the Mattermost services using both Docker Compose files
+echo "Starting Mattermost services using $DOCKER_COMPOSE_FILE and $DOCKER_COMPOSE_WITHOUT_NGINX_FILE..."
+sudo docker compose -f "$DOCKER_COMPOSE_FILE" -f "$DOCKER_COMPOSE_WITHOUT_NGINX_FILE" --env-file .env up -d
 
 # Check if the services started successfully
 if [ $? -eq 0 ]; then
