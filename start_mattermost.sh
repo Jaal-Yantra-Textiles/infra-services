@@ -20,7 +20,7 @@ fi
 
 # Start the Mattermost services using the specified Docker Compose file
 echo "Starting Mattermost services using $DOCKER_COMPOSE_FILE..."
-docker-compose -f "$DOCKER_COMPOSE_FILE" --env-file .env up -d
+docker compose -f "$DOCKER_COMPOSE_FILE" --env-file .env up -d
 
 # Check if the services started successfully
 if [ $? -eq 0 ]; then
