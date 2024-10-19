@@ -178,7 +178,7 @@ AFFiNE.server.port = 3010;
 const env = process.env;
 
 if (env.R2_OBJECT_STORAGE_ACCOUNT_ID) {
-  AFFiNE.plugins.use("cloudflare-r2", {
+  AFFiNE.use("cloudflare-r2", {
     accountId: env.R2_OBJECT_STORAGE_ACCOUNT_ID,
     credentials: {
       accessKeyId: env.R2_OBJECT_STORAGE_ACCESS_KEY_ID,
@@ -186,16 +186,16 @@ if (env.R2_OBJECT_STORAGE_ACCOUNT_ID) {
     },
   });
 
-  AFFiNE.storage.storages.avatar.provider = "cloudflare-r2";
-  AFFiNE.storage.storages.avatar.bucket = "account-avatar";
-  AFFiNE.storage.storages.avatar.publicLinkFactory = (key) =>
+  AFFiNE.storages.avatar.provider = "cloudflare-r2";
+  AFFiNE.storages.avatar.bucket = "account-avatar";
+  AFFiNE.storages.avatar.publicLinkFactory = (key) =>
     `https://avatar.metaroot.zone/${key}`;
 
-  AFFiNE.storage.storages.blob.provider = "cloudflare-r2";
-  AFFiNE.storage.storages.blob.bucket = `workspace-blobs-${AFFiNE.affine.canary ? "prod" : "prod"}`;
+  AFFiNE.storages.blob.provider = "cloudflare-r2";
+  AFFiNE.storages.blob.bucket = `workspace-blobs-${AFFiNE.affine.canary ? "prod" : "prod"}`;
 }
 
-AFFiNE.plugins.use("oauth", {
+AFFiNE.use("oauth", {
   providers: {
     google: {
       clientId: env.OAUTH_GOOGLE_CLIENT_ID,
@@ -210,8 +210,31 @@ AFFiNE.plugins.use("oauth", {
   },
 });
 
-AFFiNE.plugins.use("copilot", {
+AFFiNE.use("copilot", {
   openai: {
     apikey: env.COPILOT_OPENAI_API_KEY,
+  },
+  fal: {
+    apikey: env.COPILOT_FAL_API_KEY,
+  },
+  storage: {
+    provider: "cloudflare-r2",
+    bucket: `workspace-copilot-${AFFiNE.affine.canary ? "canary" : "prod"}`,
+  },
+});
+
+AFFiNE.use("redis", {
+  host: env.REDIS_SERVER_HOST,
+  db: 0,
+  port: 6379,
+});
+
+AFFiNE.use("payment", {
+  stripe: {
+    keys: {
+      // fake the key to ensure the server generate full GraphQL Schema even env vars are not set
+      APIKey: "1",
+      webhookKey: "1",
+    },
   },
 });
