@@ -13,25 +13,25 @@ CUSTOM_CONFIG := ./config/affine.js
 
 up: ## Start Docker Compose services
 	@echo "Starting Docker Compose services..."
-	docker-compose up -d
+	docker compose up -d
 
 down: ## Stop Docker Compose services
 	@echo "Stopping Docker Compose services..."
-	docker-compose down
+	docker compose down
 
 restart: down up ## Restart Docker Compose services
 
 logs: ## View Docker Compose logs
-	docker-compose logs -f
+	docker compose logs -f
 
 ps: ## List running Docker Compose containers
-	docker-compose ps
+	docker compose ps
 
 pull: ## Pull latest Docker images
-	docker-compose pull
+	docker compose pull
 
 build: ## Build Docker images
-	docker-compose build
+	docker compose build
 
 copy-config: ## Copy custom affine.js to the container and restart service
 	@echo "Copying custom affine.js to container..."
@@ -41,7 +41,7 @@ copy-config: ## Copy custom affine.js to the container and restart service
 	cp $(CUSTOM_CONFIG) $(CONFIG_PATH)
 	@echo "Copied affine.js to $(CONFIG_PATH). Restarting container..."
 	# Restart the affine service to apply the new configuration
-	docker-compose restart $(SERVICE_NAME)
+	docker compose restart $(SERVICE_NAME)
 
 clean: ## Remove unused Docker images and volumes
 	@echo "Removing unused Docker resources..."
