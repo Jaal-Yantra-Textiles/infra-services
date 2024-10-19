@@ -41,7 +41,7 @@ copy-config: ## Copy custom affine.js to the container and restart service
 	cp $(CUSTOM_CONFIG) $(CONFIG_PATH)
 	@echo "Copied affine.js to $(CONFIG_PATH). Restarting container..."
 	# Restart the affine service to apply the new configuration
-	docker compose restart $(SERVICE_NAME)
+	docker restart $(SERVICE_NAME)
 
 clean: ## Remove unused Docker images and volumes
 	@echo "Removing unused Docker resources..."

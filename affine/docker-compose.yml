@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   affine:
     image: ghcr.io/toeverything/affine-graphql:stable
@@ -21,9 +19,14 @@ services:
       - DATABASE_URL=postgres://affine:affine@postgres:5432/affine
       - NODE_ENV=production
       - CAPTCHA_SITE_KEY=${CAPTCHA_SITE_KEY}
+      - AFFINE_SERVER_HOST=${AFFINE_SERVER_HOST}
       - ENABLE_CAPTCHA=${ENABLE_CAPTCHA}
       - CAPTCHA_TURNSTILE_SECRET=${CAPTCHA_TURNSTILE_SECRET}
       - MAILER_USER=${MAILER_USER}
+      - MAILER_PORT=${MAILER_PORT}
+      - MAILER_HOST=${MAILER_HOST}
+      - MAILER_SENDER=${MAILER_SENDER}
+      - MAILER_SECURE=false
       - MAILER_PASSWORD=${MAILER_PASSWORD}
       - OAUTH_GOOGLE_CLIENT_ID=${OAUTH_GOOGLE_CLIENT_ID}
       - OAUTH_GOOGLE_CLIENT_SECRET=${OAUTH_GOOGLE_CLIENT_SECRET}
