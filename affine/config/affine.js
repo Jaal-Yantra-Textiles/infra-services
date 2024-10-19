@@ -209,3 +209,9 @@ AFFiNE.plugins.use("oauth", {
     },
   },
 });
+
+AFFiNE.plugins.use("copilot", {
+  openai: {
+    apikey: env.COPILOT_OPENAI_API_KEY,
+  },
+});
