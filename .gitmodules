@@ -1,3 +1,6 @@
 [submodule "mattermost/docker"]
 	path = mattermost/docker
 	url = https://github.com/mattermost/docker
+[submodule "community-edition"]
+	path = community-edition
+	url = https://github.com/plausible/community-edition/
