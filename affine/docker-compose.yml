@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  affine:
+    image: ghcr.io/toeverything/affine-graphql:stable
+    container_name: affine_selfhosted
+    command:
+      ["sh", "-c", "node ./scripts/self-host-predeploy && node ./dist/index.js"]
+    ports:
+      - "3010:3010"
+      - "5555:5555"
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      - NODE_OPTIONS="--import=./scripts/register.js"
+      - AFFINE_CONFIG_PATH=/root/.affine/config
+      - REDIS_SERVER_HOST=redis
+      - DATABASE_URL=postgres://affine:affine@postgres:5432/affine
+      - NODE_ENV=production
+      - CAPTCHA_SITE_KEY=${CAPTCHA_SITE_KEY}
+      - ENABLE_CAPTCHA=${ENABLE_CAPTCHA}
+      - CAPTCHA_TURNSTILE_SECRET=${CAPTCHA_TURNSTILE_SECRET}
+      - MAILER_USER=${MAILER_USER}
+      - MAILER_PASSWORD=${MAILER_PASSWORD}
+      - OAUTH_GOOGLE_CLIENT_ID=${OAUTH_GOOGLE_CLIENT_ID}
+      - OAUTH_GOOGLE_CLIENT_SECRET=${OAUTH_GOOGLE_CLIENT_SECRET}
+      - R2_OBJECT_STORAGE_ACCOUNT_ID=${R2_OBJECT_STORAGE_ACCOUNT_ID}
+      - R2_OBJECT_STORAGE_ACCESS_KEY_ID=${R2_OBJECT_STORAGE_ACCESS_KEY_ID}
+      - R2_OBJECT_STORAGE_SECRET_ACCESS_KEY=${R2_OBJECT_STORAGE_SECRET_ACCESS_KEY}
+      - COPILOT_OPENAI_API_KEY=${COPILOT_OPENAI_API_KEY}
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.alt.rule=Host(`alt.jaalyantra.com`)"
+      - "traefik.http.routers.alt.entrypoints=web"
+      - "traefik.http.services.alt.loadbalancer.server.port=3010"
+      - "traefik.http.routers.alt.entrypoints=websecure"
+      - "traefik.http.routers.alt.tls.certresolver=myresolver"
+      # Telemetry allows us to collect data on how you use the affine. This data will helps us improve the app and provide better features.
+      # Uncomment next line if you wish to quit telemetry.
+      # - TELEMETRY_ENABLE=false
+  redis:
+    image: redis
+    container_name: affine_redis
+    restart: unless-stopped
+    volumes:
+      - ~/.affine/self-host/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  postgres:
+    image: postgres:16
+    container_name: affine_postgres
+    restart: unless-stopped
+    volumes:
+      - ~/.affine/self-host/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U affine"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_USER: affine
+      POSTGRES_PASSWORD: affine
+      POSTGRES_DB: affine
+      PGDATA: /var/lib/postgresql/data/pgdata
