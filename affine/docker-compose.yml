@@ -34,6 +34,10 @@ services:
       - R2_OBJECT_STORAGE_ACCESS_KEY_ID=${R2_OBJECT_STORAGE_ACCESS_KEY_ID}
       - R2_OBJECT_STORAGE_SECRET_ACCESS_KEY=${R2_OBJECT_STORAGE_SECRET_ACCESS_KEY}
       - COPILOT_OPENAI_API_KEY=${COPILOT_OPENAI_API_KEY}
+      - AFFINE_SERVER_HTTPS=${AFFINE_SERVER_HTTPS}
+    volumes:
+      # custom configurations
+      - ~/.affine/self-host/config:/root/.affine/config
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
